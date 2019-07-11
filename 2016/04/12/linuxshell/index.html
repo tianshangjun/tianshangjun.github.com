@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="set命令的-e参数，linux自带的说明如下：“Exit immediately if a simple command exits with a non-zero status.”set -o pipefail对于set命令-o参数的pipefail选项，linux是这样解释的：“If set, the return value of a pipeline is the value of th">
+<meta name="keywords" content="云计算 大数据 AI 安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="shell">
+<meta property="og:url" content="http://tianjinchen.com/2016/04/12/linuxshell/index.html">
+<meta property="og:site_name" content="一君的博客">
+<meta property="og:description" content="set命令的-e参数，linux自带的说明如下：“Exit immediately if a simple command exits with a non-zero status.”set -o pipefail对于set命令-o参数的pipefail选项，linux是这样解释的：“If set, the return value of a pipeline is the value of th">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-07-11T09:10:45.109Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="shell">
+<meta name="twitter:description" content="set命令的-e参数，linux自带的说明如下：“Exit immediately if a simple command exits with a non-zero status.”set -o pipefail对于set命令-o参数的pipefail选项，linux是这样解释的：“If set, the return value of a pipeline is the value of th">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://tianjinchen.com/2016/04/12/linuxshell/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>shell | 一君的博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一君的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Navigationsleiste an/ausschalten">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Startseite</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Schlagwörter</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Kategorien</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-读书">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/books" rel="section"><i class="menu-item-icon fa fa-fw fa-book"></i> <br>读书</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-电影">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/movies" rel="section"><i class="menu-item-icon fa fa-fw fa-film"></i> <br>电影</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-calendar-check-o"></i> <br>Archiv</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianjinchen.com/2016/04/12/linuxshell/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Sam Tian">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一君的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">shell
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Erstellt: 2016-04-12 17:20:00" itemprop="dateCreated datePublished" datetime="2016-04-12T17:20:00+08:00">2016-04-12</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Bearbeitet am</span>
+                
+                <time title="Geändert am: 2019-07-11 17:10:45" itemprop="dateModified" datetime="2019-07-11T17:10:45+08:00">2019-07-11</time>
+              </span>
+            
+          
+
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          <br>
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Symbole im Artikel gezählt: </span>
+              
+              <span title="Symbole im Artikel gezählt">5k</span>
+            </span>
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Lesezeit &asymp;</span>
+              
+              <span title="Lesezeit">5 minuten.</span>
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>set命令的-e参数，linux自带的说明如下：<br>“Exit immediately if a simple command exits with a non-zero status.”<br>set -o pipefail<br>对于set命令-o参数的pipefail选项，linux是这样解释的：<br>“If set, the return value of a pipeline is the value of the last (rightmost) command to exit with a  non-zero  status,or zero if all commands in the pipeline exit successfully.  This option is disabled by default.”</p>
+<h1 id="设置了set-o-pipefail，返回从右往左第一个非零返回值"><a href="#设置了set-o-pipefail，返回从右往左第一个非零返回值" class="headerlink" title="设置了set -o pipefail，返回从右往左第一个非零返回值"></a>设置了set -o pipefail，返回从右往左第一个非零返回值</h1><h1 id="没有set-o-pipefail，默认返回最后一个管道命令的返回值"><a href="#没有set-o-pipefail，默认返回最后一个管道命令的返回值" class="headerlink" title="没有set -o pipefail，默认返回最后一个管道命令的返回值"></a>没有set -o pipefail，默认返回最后一个管道命令的返回值</h1><a id="more"></a>
+<p>$<em>表示所有这些参数都被双引号引住。若一个脚本接收两个参数，$</em>等于$1$2<br>$@表示所有这些参数都分别被双引号引住，若一个脚本接收到两个参数，$@等价于$1$2<br>$#表示提供给脚本的参数个数</p>
+<p>文件比较运算符<br>-e filename  如果 filename存在，则为真  [ -e /var/log/syslog ]<br>-d filename  如果 filename为目录，则为真  [ -d /tmp/mydir ]<br>-f filename  如果 filename为常规文件，则为真  [ -f /usr/bin/grep ]<br>-L filename  如果 filename为符号链接，则为真  [ -L /usr/bin/grep ]<br>-r filename  如果 filename可读，则为真  [ -r /var/log/syslog ]<br>-w filename  如果 filename可写，则为真  [ -w /var/mytmp.txt ]<br>-x filename  如果 filename可执行，则为真  [ -L /usr/bin/grep ]<br>filename1-nt filename2  如果 filename1比 filename2新，则为真  [ /tmp/install/etc/services -nt /etc/services ]<br>filename1-ot filename2  如果 filename1比 filename2旧，则为真  [ /boot/bzImage -ot arch/i386/boot/bzImage ]<br>字符串比较运算符 （请注意引号的使用，这是防止空格扰乱代码的好方法）<br>-z string  如果 string长度为零，则为真  [ -z “$myvar” ]<br>-n string  如果 string长度非零，则为真  [ -n “$myvar” ]<br>string1= string2  如果 string1与 string2相同，则为真  [ “$myvar” = “one two three” ]<br>string1!= string2  如果 string1与 string2不同，则为真  [ “$myvar” != “one two three” ]<br>算术比较运算符<br>num1-eq num2  等于 [ 3 -eq $mynum ]<br>num1-ne num2  不等于 [ 3 -ne $mynum ]<br>num1-lt num2  小于 [ 3 -lt $mynum ]<br>num1-le num2  小于或等于 [ 3 -le $mynum ]<br>num1-gt num2  大于 [ 3 -gt $mynum ]<br>num1-ge num2  大于或等于 [ 3 -ge $mynum ]</p>
+<p>$# 是传给脚本的参数个数<br>$0 是脚本本身的名字<br>$1 是传递给该shell脚本的第一个参数<br>$2 是传递给该shell脚本的第二个参数<br>$@ 是传给脚本的所有参数的列表<br>$* 是以一个单字符串显示所有向脚本传递的参数，与位置变量不同，参数可超过9个<br>$$ 是脚本运行的当前进程ID号<br>$? 是显示最后命令的退出状态，0表示没有错误，其他表示有错误</p>
+<p>区别：@ *</p>
+<pre><code>相同点：都是引用所有参数
+不同点：只有在双引号中体现出来。假设在脚本运行时写了三个参数（分别存储在1</code></pre><p>2 3）则”*” 等价于 “12 3”（传递了一个参数）；而“@” 等价于 “1””2” “$3”（传递了三个参数）<br>wc awk<br>expr<br>mktemp<br>tail -n<br>tar x -C </p>
+<p>[ -f $INSTALL_LOG ]<br>tput cols 交互性的、专业性强的屏幕输出，如移动或更改光标、更改文本属性，以及清除终端屏幕的特定区域</p>
+<p>[ -a FILE ] 如果 FILE 存在则为真。</p>
+<p>[ -b FILE ] 如果 FILE 存在且是一个块特殊文件则为真。</p>
+<p>[ -c FILE ] 如果 FILE 存在且是一个字特殊文件则为真。</p>
+<p>[ -d FILE ] 如果 FILE 存在且是一个目录则为真。</p>
+<p>[ -e FILE ] 如果 FILE 存在则为真。</p>
+<p>[ -f FILE ] 如果 FILE 存在且是一个普通文件则为真。</p>
+<p>[ -g FILE ] 如果 FILE 存在且已经设置了SGID则为真。</p>
+<p>[ -h FILE ] 如果 FILE 存在且是一个符号连接则为真。</p>
+<p>[ -k FILE ] 如果 FILE 存在且已经设置了粘制位则为真。</p>
+<p>[ -p FILE ] 如果 FILE 存在且是一个名字管道(F如果O)则为真。</p>
+<p>[ -r FILE ] 如果 FILE 存在且是可读的则为真。</p>
+<p>[ -s FILE ] 如果 FILE 存在且大小不为o则为真。</p>
+<p>[ -t FD ] 如果文件描述符 FD 打开且指向一个终端则为真。</p>
+<p>[ -u FILE ] 如果 FILE 存在且设置了SUID (set user ID)则为真。</p>
+<p>[ -w FILE ] 如果 FILE 如果 FILE 存在且是可写的则为真。</p>
+<p>[ -x FILE ] 如果 FILE 存在且是可执行的则为真。</p>
+<p>[ -O FILE ] 如果 FILE 存在且属有效用户ID则为真。</p>
+<p>[ -G FILE ] 如果 FILE 存在且属有效用户组则为真。</p>
+<p>[ -L FILE ] 如果 FILE 存在且是一个符号连接则为真。</p>
+<p>[ -N FILE ] 如果 FILE 存在 and has been mod如果ied since it was last read则为真。</p>
+<p>[ -S FILE ] 如果 FILE 存在且是一个套接字则为真。</p>
+<p>[ FILE1 -nt FILE2 ] 如果 FILE1 has been changed more recently than FILE2, or 如果 FILE1 exists and FILE2 does not则为真。</p>
+<p>[ FILE1 -ot FILE2 ] 如果 FILE1 比 FILE2 要老, 或者 FILE2 存在且 FILE1 不存在则为真。</p>
+<p>[ FILE1 -ef FILE2 ] 如果 FILE1 和 FILE2 指向相同的设备和节点号则为真。</p>
+<p>[ -o OPTIONNAME ] 如果 shell选项 “OPTIONNAME” 开启则为真。</p>
+<p>[ -z STRING ] “STRING” 的长度为零则为真。</p>
+<p>[ -n STRING ] or [ STRING ] “STRING” 的长度为非零 non-zero则为真。</p>
+<p>[ STRING1 == STRING2 ] 如果2个字符串相同。 “=” may be used instead of “==” for strict POSIX compliance则为真。</p>
+<p>[ STRING1 != STRING2 ] 如果字符串不相等则为真。</p>
+<p>[ STRING1 &lt; STRING2 ] 如果 “STRING1” sorts before “STRING2” lexicographically in the current locale则为真。</p>
+<p>[ STRING1 &gt; STRING2 ] 如果 “STRING1” sorts after “STRING2” lexicographically in the current locale则为真。</p>
+<p>[ ARG1 OP ARG2 ] “OP” is one of -eq, -ne, -lt, -le, -gt or -ge. These arithmetic binary operators return true if “ARG1” is equal to, not equal to, less than, less than or equal to, greater than, or greater than or equal to “ARG2”, respectively. “ARG1” and “ARG2” are integers.</p>
+<p>  echo “some text”: 将文字内容打印在屏幕上</p>
+<p>　　ls: 文件列表</p>
+<p>　　wc –l filewc -w filewc -c file: 计算文件行数计算文件中的单词数计算文件中的字符数</p>
+<p>　　cp sourcefile destfile: 文件拷贝</p>
+<p>　　mv oldname newname : 重命名文件或移动文件</p>
+<p>　　rm file: 删除文件</p>
+<p>　　grep ‘pattern’ file: 在文件内搜索字符串比如：grep ‘searchstring’ file.txt</p>
+<p>　　cut -b colnum file: 指定欲显示的文件内容范围，并将它们输出到标准输出设备比如：输出</p>
+<p>每行第5个到第9个字符cut -b5-9 file.txt千万不要和cat命令混淆，</p>
+<p>这是两个完全不同的命令</p>
+<p>　　cat file.txt: 输出文件内容到标准输出设备（屏幕）上</p>
+<p>　　file somefile: 得到文件类型</p>
+<p>　　read var: 提示用户输入，并将输入赋值给变量</p>
+<p>　　sort file.txt: 对file.txt文件中的行进行排序</p>
+<p>　　uniq: 删除文本文件中出现的行列比如： sort file.txt | uniq</p>
+<p>　　expr: 进行数学运算Example: add 2 and 3expr 2 “+” 3</p>
+<p>　　find: 搜索文件比如：根据文件名搜索find . -name filename -print</p>
+<p>　　tee: 将数据输出到标准输出设备(屏幕) 和文件比如：somecommand | tee outfile</p>
+<p>　　basename file: 返回不包含路径的文件名比如： basename /bin/tux将返回 tux</p>
+<p>　　dirname file: 返回文件所在路径比如：dirname /bin/tux将返回 /bin</p>
+<p>　　head file: 打印文本文件开头几行</p>
+<p>　　tail file : 打印文本文件末尾几行</p>
+<p>　　sed: Sed是一个基本的查找替换程序。可以从标准输入（比如命令管道）读入文本，并将</p>
+<p>结果输出到标准输出（屏幕）。该命令采用正则表达式（见参考）进行搜索。</p>
+<p>不要和shell中的通配符相混淆。比如：将linuxfocus 替换为</p>
+<p>LinuxFocus ：cat text.file | sed ‘s/linuxfocus/LinuxFocus/‘ &gt; newtext.file</p>
+<p>　　awk: awk 用来从文本文件中提取字段。缺省地，字段分割符是空格，可以使用-F指定其他分割符。</p>
+<p>cat file.txt | awk -F, ‘{print $1 “,” $3 }’这里我们使用，作为字段分割符，同时打印</p>
+<p>第一个和第三个字段。如果该文件内容如下： Adam Bor, 34, IndiaKerry Miller, 22, USA</p>
+<p>命令输出结果为：Adam Bor, IndiaKerry Miller, USA  </p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/06/20/docker/" rel="next" title="docker">
+                <i class="fa fa-chevron-left"></i> docker
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/06/28/vmwaredisk/" rel="prev" title="vmware disk">
+                vmware disk <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Sam Tian</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">15</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/tianshangjun" title="GitHub &rarr; https://github.com/tianshangjun" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#设置了set-o-pipefail，返回从右往左第一个非零返回值"><span class="nav-number">1.</span> <span class="nav-text">设置了set -o pipefail，返回从右往左第一个非零返回值</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#没有set-o-pipefail，默认返回最后一个管道命令的返回值"><span class="nav-number">2.</span> <span class="nav-text">没有set -o pipefail，默认返回最后一个管道命令的返回值</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sam Tian</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="Insgesamt gezählte Symbole">48k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="Insgesamte Lesezeit">43 minuten.</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.2.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

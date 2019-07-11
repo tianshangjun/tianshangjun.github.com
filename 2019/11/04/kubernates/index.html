@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="1.Setting up flanneld and etcd   Setup Docker-Bootstrap   sudo sh -c ‘docker -d -H unix:///var/run/docker-bootstrap.sock -p /var/run/docker-bootstrap.pid –iptables=false –ip-masq=false –bridge=none –g">
+<meta name="keywords" content="云计算 大数据 AI 安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="k8s">
+<meta property="og:url" content="http://tianjinchen.com/2019/11/04/kubernates/index.html">
+<meta property="og:site_name" content="一君的博客">
+<meta property="og:description" content="1.Setting up flanneld and etcd   Setup Docker-Bootstrap   sudo sh -c ‘docker -d -H unix:///var/run/docker-bootstrap.sock -p /var/run/docker-bootstrap.pid –iptables=false –ip-masq=false –bridge=none –g">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-07-11T09:09:21.337Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="k8s">
+<meta name="twitter:description" content="1.Setting up flanneld and etcd   Setup Docker-Bootstrap   sudo sh -c ‘docker -d -H unix:///var/run/docker-bootstrap.sock -p /var/run/docker-bootstrap.pid –iptables=false –ip-masq=false –bridge=none –g">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://tianjinchen.com/2019/11/04/kubernates/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>k8s | 一君的博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一君的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Navigationsleiste an/ausschalten">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Startseite</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Schlagwörter</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Kategorien</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-读书">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/books" rel="section"><i class="menu-item-icon fa fa-fw fa-book"></i> <br>读书</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-电影">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/movies" rel="section"><i class="menu-item-icon fa fa-fw fa-film"></i> <br>电影</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-calendar-check-o"></i> <br>Archiv</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianjinchen.com/2019/11/04/kubernates/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Sam Tian">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一君的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">k8s
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Erstellt: 2019-11-04 17:20:00" itemprop="dateCreated datePublished" datetime="2019-11-04T17:20:00+08:00">2019-11-04</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Bearbeitet am</span>
+                
+                <time title="Geändert am: 2019-07-11 17:09:21" itemprop="dateModified" datetime="2019-07-11T17:09:21+08:00">2019-07-11</time>
+              </span>
+            
+          
+
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          <br>
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Symbole im Artikel gezählt: </span>
+              
+              <span title="Symbole im Artikel gezählt">3.2k</span>
+            </span>
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Lesezeit &asymp;</span>
+              
+              <span title="Lesezeit">3 minuten.</span>
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>1.Setting up flanneld and etcd</p>
+<p>  Setup Docker-Bootstrap<br>   sudo sh -c ‘docker -d -H unix:///var/run/docker-bootstrap.sock -p /var/run/docker-bootstrap.pid –iptables=false –ip-masq=false –bridge=none –graph=/var/lib/docker-bootstrap 2&gt; /var/log/docker-bootstrap.log 1&gt; /dev/null &amp;’<br> <a id="more"></a><br>  Startup etcd for flannel and the API server to use<br>   sudo docker -H unix:///var/run/docker-bootstrap.sock run –net=host -d gcr.io/google_containers/etcd:2.0.12 /usr/local/bin/etcd –addr=127.0.0.1:4001 –bind-addr=0.0.0.0:4001 –data-dir=/var/etcd/data</p>
+<p>   sudo docker -H unix:///var/run/docker-bootstrap.sock run –net=host gcr.io/google_containers/etcd:2.0.12 etcdctl set /coreos.com/network/config ‘{ “Network”: “10.1.0.0/16” }’<br>  Set up Flannel on the master node<br>    sudo systemctl stop docker<br>    Run flannel<br>     sudo docker -H unix:///var/run/docker-bootstrap.sock run -d –net=host –privileged -v /dev/net:/dev/net quay.io/coreos/flannel:0.5.0<br>     The previous command should have printed a really long hash, copy this hash.</p>
+<pre><code>Now get the subnet settings from flannel: 
+
+sudo docker -H unix:///var/run/docker-bootstrap.sock exec 9afb1b92439752920b5dd0b7186d542b29092c3639975311da26ec92c3f63eb0 cat /run/flannel/subnet.env</code></pre><p>  Edit the docker configuration<br>     –bip=${FLANNEL_SUBNET} –mtu=${FLANNEL_MTU}<br>    ip link set dev docker0 down<br>    sudo brctl delbr docker0</p>
+<p>  systemctl start docker</p>
+<p>2.Starting the Kubernetes Master  </p>
+<p> startup Kubernetes<br>   sudo docker run –net=host -d -v /var/run/docker.sock:/var/run/docker.sock  gcr.io/google_containers/hyperkube:v0.21.2 /hyperkube kubelet –api_servers=<a href="http://localhost:8080" target="_blank" rel="noopener">http://localhost:8080</a> –v=2 –address=0.0.0.0 –enable_server –hostname_override=127.0.0.1 –config=/etc/kubernetes/manifests-multi</p>
+<p>3.Also run the service proxy</p>
+<p>  sudo docker run -d –net=host –privileged gcr.io/google_containers/hyperkube:v0.21.2 /hyperkube proxy –master=<a href="http://127.0.0.1:8080" target="_blank" rel="noopener">http://127.0.0.1:8080</a> –v=2</p>
+<p> $ systemctl stop firewalld &amp;&amp; systemctl disable firewalld<br> $ setenforce 0<br> $ vim /etc/selinux/config<br> SELINUX=disabled</p>
+<p> curl -fsSL <a href="https://get.docker.com/" target="_blank" rel="noopener">https://get.docker.com/</a> | sh</p>
+<p> systemctl enable docker &amp;&amp; systemctl start docker</p>
+<p> $ cat &lt;&lt;EOF | tee /etc/sysctl.d/k8s.conf<br> net.ipv4.ip_forward = 1<br> net.bridge.bridge-nf-call-ip6tables = 1<br> net.bridge.bridge-nf-call-iptables = 1<br> EOF</p>
+<p> $ sysctl -p /etc/sysctl.d/k8s.conf</p>
+<p> $ swapoff -a &amp;&amp; sysctl -w vm.swappiness=0</p>
+<h1 id="不同文件会有差异"><a href="#不同文件会有差异" class="headerlink" title="不同文件会有差异"></a>不同文件会有差异</h1><p> $ sed ‘/swap.img/d’ -i /etc/fstab</p>
+<p> 在所有节点下载Kubernetes二进制执行文件：<br> $ export KUBE_URL=<a href="https://storage.googleapis.com/kubernetes-release/release/v1.11.0/bin/linux/amd64" target="_blank" rel="noopener">https://storage.googleapis.com/kubernetes-release/release/v1.11.0/bin/linux/amd64</a><br> $ wget ${KUBE_URL}/kubelet -O /usr/local/bin/kubelet<br> $ chmod +x /usr/local/bin/kubelet</p>
+<h1 id="Node-可忽略下載-kubectl"><a href="#Node-可忽略下載-kubectl" class="headerlink" title="Node 可忽略下載 kubectl"></a>Node 可忽略下載 kubectl</h1><p> $ wget ${KUBE_URL}/kubectl -O /usr/local/bin/kubectl<br> $ chmod +x /usr/local/bin/kubectl<br> 在所有节点下载Kubernetes CNI二进制执行文件：<br> $ export CNI_URL=<a href="https://github.com/containernetworking/plugins/releases/download" target="_blank" rel="noopener">https://github.com/containernetworking/plugins/releases/download</a><br> $ mkdir -p /opt/cni/bin &amp;&amp; cd /opt/cni/bin<br> $ wget -qO- –show-progress “${CNI_URL}/v0.7.1/cni-plugins-amd64-v0.7.1.tgz” | tar -zx<br> 在k8s-m1节点安装cfssl工具，这将会用来建立CA，并产生TLS凭证。<br> $ export CFSSL_URL=<a href="https://pkg.cfssl.org/R1.2" target="_blank" rel="noopener">https://pkg.cfssl.org/R1.2</a><br> $ wget ${CFSSL_URL}/cfssl_linux-amd64 -O /usr/local/bin/cfssl<br> $ wget ${CFSSL_URL}/cfssljson_linux-amd64 -O /usr/local/bin/cfssljson<br> $ chmod +x /usr/local/bin/cfssl /usr/local/bin/cfssljson</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/14/mongodb/" rel="next" title="mongodb">
+                <i class="fa fa-chevron-left"></i> mongodb
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Sam Tian</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">15</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/tianshangjun" title="GitHub &rarr; https://github.com/tianshangjun" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#不同文件会有差异"><span class="nav-number">1.</span> <span class="nav-text">不同文件会有差异</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Node-可忽略下載-kubectl"><span class="nav-number">2.</span> <span class="nav-text">Node 可忽略下載 kubectl</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sam Tian</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="Insgesamt gezählte Symbole">48k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="Insgesamte Lesezeit">43 minuten.</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.2.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

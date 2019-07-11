@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="准备环境 #yum install createrepo mkisofs isomd5sum squashfs-tools mkdir /opt/isoisolinux/isolinux.cfgappend initrd=initrd.img ks=cdrom:/isolinux/ks.cfg asknetwork">
+<meta name="keywords" content="云计算 大数据 AI 安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="定制化光盘">
+<meta property="og:url" content="http://tianjinchen.com/2017/05/26/centosiso/index.html">
+<meta property="og:site_name" content="一君的博客">
+<meta property="og:description" content="准备环境 #yum install createrepo mkisofs isomd5sum squashfs-tools mkdir /opt/isoisolinux/isolinux.cfgappend initrd=initrd.img ks=cdrom:/isolinux/ks.cfg asknetwork">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-07-11T09:10:22.777Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="定制化光盘">
+<meta name="twitter:description" content="准备环境 #yum install createrepo mkisofs isomd5sum squashfs-tools mkdir /opt/isoisolinux/isolinux.cfgappend initrd=initrd.img ks=cdrom:/isolinux/ks.cfg asknetwork">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://tianjinchen.com/2017/05/26/centosiso/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>定制化光盘 | 一君的博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一君的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Navigationsleiste an/ausschalten">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Startseite</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Schlagwörter</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Kategorien</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-读书">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/books" rel="section"><i class="menu-item-icon fa fa-fw fa-book"></i> <br>读书</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-电影">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/movies" rel="section"><i class="menu-item-icon fa fa-fw fa-film"></i> <br>电影</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-calendar-check-o"></i> <br>Archiv</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianjinchen.com/2017/05/26/centosiso/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Sam Tian">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一君的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">定制化光盘
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Erstellt: 2017-05-26 18:20:00" itemprop="dateCreated datePublished" datetime="2017-05-26T18:20:00+08:00">2017-05-26</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Bearbeitet am</span>
+                
+                <time title="Geändert am: 2019-07-11 17:10:22" itemprop="dateModified" datetime="2019-07-11T17:10:22+08:00">2019-07-11</time>
+              </span>
+            
+          
+
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          <br>
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Symbole im Artikel gezählt: </span>
+              
+              <span title="Symbole im Artikel gezählt">14k</span>
+            </span>
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Lesezeit &asymp;</span>
+              
+              <span title="Lesezeit">13 minuten.</span>
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>准备环境</p>
+<p>#yum install createrepo mkisofs isomd5sum squashfs-tools</p>
+<h1 id="mkdir-opt-iso"><a href="#mkdir-opt-iso" class="headerlink" title="mkdir /opt/iso"></a>mkdir /opt/iso</h1><p>isolinux/isolinux.cfg<br>append initrd=initrd.img ks=cdrom:/isolinux/ks.cfg asknetwork</p>
+<a id="more"></a>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"># System authorization information</span><br><span class="line">auth --enableshadow --passalgo=sha512</span><br><span class="line"># Use CDROM installation media</span><br><span class="line">cdrom</span><br><span class="line"># Use graphical install</span><br><span class="line">graphical</span><br><span class="line"># Keyboard layouts</span><br><span class="line">keyboard --vckeymap=us --xlayouts=&apos;us&apos;</span><br><span class="line"># System language</span><br><span class="line">#lang zh_CN.UTF-8</span><br><span class="line"># SELinux configuration</span><br><span class="line">selinux --disabled</span><br><span class="line"># Auto reboot after installation</span><br><span class="line">reboot</span><br><span class="line"></span><br><span class="line"># Network information</span><br><span class="line">network --bootproto=dhcp --onboot=yes --ipv6=auto</span><br><span class="line">network --hostname=localhost</span><br><span class="line"></span><br><span class="line"># System timezone</span><br><span class="line">timezone Asia/Shanghai --isUtc</span><br><span class="line"></span><br><span class="line"># Disk Partition</span><br><span class="line">autopart --type=lvm</span><br><span class="line"></span><br><span class="line">%addon com_redhat_kdump --enable --reserve-mb=&apos;auto&apos;</span><br><span class="line">%end</span><br><span class="line"></span><br><span class="line">%post --nochroot</span><br><span class="line">mkdir -p /mnt/sysimage/opt/ta-dvd/</span><br><span class="line">cp -rf /run/install/repo/Packages /mnt/sysimage/opt/ta-dvd/</span><br><span class="line">cp -rf /run/install/repo/repodata /mnt/sysimage/opt/ta-dvd/</span><br><span class="line">cp -rf /run/install/repo/scripts /mnt/sysimage/opt/ta-dvd/</span><br><span class="line">cp -rf /run/install/repo/repos /mnt/sysimage/opt/ta-dvd/</span><br><span class="line">%end</span><br><span class="line"></span><br><span class="line">%post</span><br><span class="line"></span><br><span class="line"># hide native yum repos</span><br><span class="line">mkdir -p /opt/ta-dvd/Extra/native-repos</span><br><span class="line">mv /etc/yum.repos.d/CentOS-*.repo /opt/ta-dvd/Extra/native-repos</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># install ta repos</span><br><span class="line">cp /opt/ta-dvd/repos/* /etc/yum.repos.d/</span><br><span class="line"></span><br><span class="line"># install scripts</span><br><span class="line">#cp /opt/ta-dvd/scripts/* /usr/local/bin/</span><br><span class="line"></span><br><span class="line"># configs</span><br><span class="line">sed -i &quot;s/SELINUX\=enforcing/SELINUX\=disabled/g&quot; /etc/selinux/config</span><br><span class="line">sed -i &quot;s/#UseDNS yes/UseDNS no/g&quot; /etc/ssh/sshd_config</span><br><span class="line">echo -e &apos;export TMOUT=6000\nreadonly TMOUT&apos; &gt;&gt; /etc/profile</span><br><span class="line">unlink /etc/libvirt/qemu/networks/autostart/default.xml</span><br><span class="line">echo &apos;*                  -        nofile         65535&apos;&gt;&gt;/etc/security/limits.conf</span><br><span class="line"># services</span><br><span class="line">repos</span><br><span class="line">chkconfig NetworkManager off</span><br><span class="line">chkconfig firewalld off</span><br><span class="line">chkconfig iptables off</span><br><span class="line">chkconfig network on</span><br><span class="line">grub2-set-default 0 </span><br><span class="line">chkconfig docker on</span><br><span class="line">%end</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span><br></pre></td></tr></table></figure>
+
+<p>1、修改YUM配置文件。以确保YUM命令操作会保存RPM包</p>
+<h1 id="etc-yum-conf"><a href="#etc-yum-conf" class="headerlink" title="/etc/yum.conf"></a>/etc/yum.conf</h1><p>keepcache=1 ＃1为保存 0为不保存,默认不保存</p>
+<p>准备资源库列表XML文件 minimal-x86_64.xml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE comps PUBLIC &quot;-//ZStack//DTD Comps info//EN&quot; &quot;comps.dtd&quot;&gt;</span><br><span class="line">&lt;comps&gt;</span><br><span class="line">  &lt;group&gt;</span><br><span class="line">    &lt;id&gt;core&lt;/id&gt;</span><br><span class="line">    &lt;name&gt;Core&lt;/name&gt;</span><br><span class="line">    &lt;name xml:lang=&quot;zh_CN&quot;&gt;核心&lt;/name&gt;</span><br><span class="line">    &lt;description&gt;Smallest possible installation.&lt;/description&gt;</span><br><span class="line">    &lt;description xml:lang=&quot;zh_CN&quot;&gt;最小可能安装。&lt;/description&gt;   </span><br><span class="line">    &lt;default&gt;false&lt;/default&gt;</span><br><span class="line">    &lt;uservisible&gt;false&lt;/uservisible&gt;</span><br><span class="line">    &lt;packagelist&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;audit&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;autoconf&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;basesystem&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;bash-completion&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;bash&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;biosdevname&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;bridge-utils&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;btrfs-progs&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;coreutils&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;cronie&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;curl&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;dhclient&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;dnsmasq&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;e2fsprogs&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;expect&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;filesystem&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;firewalld&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;gcc&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;glibc&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;hostname&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;initscripts&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;iproute&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;iprutils&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;iptables&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;iputils&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;irqbalance&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;kbd&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;kexec-tools&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;less&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;man-db&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;ncurses&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;net-tools&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;nfs-utils&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;nmap&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;ntp&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;openssh-clients&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;openssh-server&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;parted&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;passwd&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;pciutils&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;plymouth&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;policycoreutils&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;procps-ng&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;pv&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;python-devel&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;python-pip&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;rootfiles&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;rpm&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;rsyslog&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;selinux-policy-targeted&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;setup&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;shadow-utils&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;sshpass&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;sudo&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;sysstat&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;systemd&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;tar&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;telnet&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;traceroute&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;tree&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;tuned&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;util-linux&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;vconfig&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;vim-enhanced&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;xfsprogs&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;mandatory&quot;&gt;yum&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;default&quot;&gt;aic94xx-firmware&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;default&quot;&gt;alsa-firmware&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;default&quot;&gt;dracut-config-rescue&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;default&quot;&gt;ivtv-firmware&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;default&quot;&gt;iwl100-firmware&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;default&quot;&gt;iwl1000-firmware&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;default&quot;&gt;iwl105-firmware&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;default&quot;&gt;iwl135-firmware&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;default&quot;&gt;iwl2000-firmware&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;default&quot;&gt;iwl2030-firmware&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;default&quot;&gt;iwl3160-firmware&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;default&quot;&gt;iwl3945-firmware&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;default&quot;&gt;iwl4965-firmware&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;default&quot;&gt;iwl5000-firmware&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;default&quot;&gt;iwl5150-firmware&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;default&quot;&gt;iwl6000-firmware&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;default&quot;&gt;iwl6000g2a-firmware&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;default&quot;&gt;iwl6000g2b-firmware&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;default&quot;&gt;iwl6050-firmware&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;default&quot;&gt;iwl7260-firmware&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;default&quot;&gt;iwl7265-firmware&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;default&quot;&gt;kernel-tools&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;default&quot;&gt;libsysfs&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;default&quot;&gt;linux-firmware&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;default&quot;&gt;microcode_ctl&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;default&quot;&gt;postfix&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;default&quot;&gt;rdma&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;optional&quot;&gt;dracut-config-generic&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;optional&quot;&gt;dracut-fips&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;optional&quot;&gt;dracut-fips-aesni&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;optional&quot;&gt;dracut-network&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;optional&quot;&gt;openssh-keycat&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;optional&quot;&gt;selinux-policy-mls&lt;/packagereq&gt;</span><br><span class="line">      &lt;packagereq type=&quot;optional&quot;&gt;tboot&lt;/packagereq&gt;	  </span><br><span class="line">	  &lt;packagereq type=&quot;default&quot;&gt;yum-plugin-ovl&lt;/packagereq&gt;	  </span><br><span class="line">    &lt;/packagelist&gt;</span><br><span class="line">  &lt;/group&gt;</span><br><span class="line">  &lt;group&gt;</span><br><span class="line">    &lt;id&gt;ta-manager&lt;/id&gt;</span><br><span class="line">    &lt;name&gt;TA Management Node&lt;/name&gt;</span><br><span class="line">    &lt;name xml:lang=&quot;zh_CN&quot;&gt;TA管理节点&lt;/name&gt;     </span><br><span class="line">    &lt;description&gt;Allows the system to act as a TA management node.&lt;/description&gt;</span><br><span class="line">    &lt;description xml:lang=&quot;zh_CN&quot;&gt;将系统作为TA管理节点使用。&lt;/description&gt;</span><br><span class="line">    &lt;default&gt;false&lt;/default&gt;</span><br><span class="line">    &lt;uservisible&gt;false&lt;/uservisible&gt;</span><br><span class="line">    &lt;packagelist&gt;</span><br><span class="line">       &lt;packagereq type=&quot;default&quot;&gt;docker-ce&lt;/packagereq&gt;	</span><br><span class="line">    &lt;/packagelist&gt;</span><br><span class="line">  &lt;/group&gt;</span><br><span class="line">  &lt;group&gt;</span><br><span class="line">    &lt;id&gt;ta-host&lt;/id&gt;</span><br><span class="line">    &lt;name&gt;TA Compute docker kernel-ml&lt;/name&gt;</span><br><span class="line">    &lt;name xml:lang=&quot;zh_CN&quot;&gt;TA计算节点&lt;/name&gt;  </span><br><span class="line">    &lt;description&gt;Allows the system to act as a TA docker kernel-ml.&lt;/description&gt;</span><br><span class="line">    &lt;description xml:lang=&quot;zh_CN&quot;&gt;将系统作为TA计算节点使用。&lt;/description&gt;   </span><br><span class="line">    &lt;default&gt;false&lt;/default&gt;</span><br><span class="line">    &lt;uservisible&gt;false&lt;/uservisible&gt;</span><br><span class="line">    &lt;packagelist&gt;       </span><br><span class="line">        &lt;packagereq type=&quot;default&quot;&gt;docker-ce&lt;/packagereq&gt;		 </span><br><span class="line">	   &lt;packagereq type=&quot;default&quot;&gt;kernel-ml&lt;/packagereq&gt; </span><br><span class="line">	   &lt;packagereq type=&quot;default&quot;&gt;kernel-ml-devel&lt;/packagereq&gt;     </span><br><span class="line">    &lt;/packagelist&gt;</span><br><span class="line">  &lt;/group&gt;</span><br><span class="line"></span><br><span class="line">  &lt;environment&gt;</span><br><span class="line">    &lt;id&gt;ta-manager&lt;/id&gt;</span><br><span class="line">    &lt;name&gt;TA Management Node&lt;/name&gt;</span><br><span class="line">    &lt;name xml:lang=&quot;zh_CN&quot;&gt;TA管理节点&lt;/name&gt;   </span><br><span class="line">    &lt;description&gt;Allows the system to act as a TA management node.&lt;/description&gt;</span><br><span class="line">    &lt;description xml:lang=&quot;zh_CN&quot;&gt;将系统作为TA管理节点使用。&lt;/description&gt;</span><br><span class="line">    &lt;display_order&gt;10&lt;/display_order&gt;</span><br><span class="line">    &lt;grouplist&gt;</span><br><span class="line">      &lt;groupid&gt;core&lt;/groupid&gt;</span><br><span class="line">      &lt;groupid&gt;ta-manager&lt;/groupid&gt;</span><br><span class="line">    &lt;/grouplist&gt;</span><br><span class="line">  &lt;/environment&gt;</span><br><span class="line">  &lt;environment&gt;</span><br><span class="line">    &lt;id&gt;ta-host&lt;/id&gt;</span><br><span class="line">    &lt;name&gt;TA Compute docker kernel-ml&lt;/name&gt;</span><br><span class="line">    &lt;name xml:lang=&quot;zh_CN&quot;&gt;TA计算节点&lt;/name&gt;</span><br><span class="line">    &lt;description&gt;Allows the system to act as a TA compute docker kernel-ml.&lt;/description&gt;</span><br><span class="line">    &lt;description xml:lang=&quot;zh_CN&quot;&gt;将系统作为TA计算节点使用。&lt;/description&gt;</span><br><span class="line">    &lt;display_order&gt;20&lt;/display_order&gt;</span><br><span class="line">    &lt;grouplist&gt;</span><br><span class="line">      &lt;groupid&gt;core&lt;/groupid&gt;</span><br><span class="line">      &lt;groupid&gt;ta-host&lt;/groupid&gt;</span><br><span class="line">    &lt;/grouplist&gt;</span><br><span class="line">  &lt;/environment&gt;</span><br><span class="line">  &lt;environment&gt;</span><br><span class="line">    &lt;id&gt;ta-expert&lt;/id&gt;</span><br><span class="line">    &lt;name&gt;TA Expert Mode&lt;/name&gt;</span><br><span class="line">    &lt;name xml:lang=&quot;zh_CN&quot;&gt;TA专家模式&lt;/name&gt;</span><br><span class="line">    &lt;description&gt;Enter the expert mode.&lt;/description&gt;</span><br><span class="line">    &lt;description xml:lang=&quot;zh_CN&quot;&gt;进入专家模式。&lt;/description&gt;</span><br><span class="line">    &lt;display_order&gt;30&lt;/display_order&gt;</span><br><span class="line">    &lt;grouplist&gt;</span><br><span class="line">      &lt;groupid&gt;core&lt;/groupid&gt;</span><br><span class="line">    &lt;/grouplist&gt;</span><br><span class="line">  &lt;/environment&gt;</span><br><span class="line">&lt;/comps&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">~~~</span><br></pre></td></tr></table></figure>
+
+<p>createrepo  -g /opt/minimal-x86_64.xml /opt/iso/</p>
+<p> mkisofs -o TA-Enterprise-x86_64-DVD-3.9.iso -input-charset utf-8 -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -R -J -v -T  -V TA -joliet-long  /opt/iso/</p>
+<p>implantisomd5 TA-Enterprise-x86_64-DVD-3.9.iso</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/26/kernel/" rel="next" title="升级内核">
+                <i class="fa fa-chevron-left"></i> 升级内核
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/10/10/sortpy/" rel="prev" title="算法">
+                算法 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Sam Tian</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">15</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/tianshangjun" title="GitHub &rarr; https://github.com/tianshangjun" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#mkdir-opt-iso"><span class="nav-number">1.</span> <span class="nav-text">mkdir /opt/iso</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#etc-yum-conf"><span class="nav-number">2.</span> <span class="nav-text">/etc/yum.conf</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sam Tian</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="Insgesamt gezählte Symbole">48k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="Insgesamte Lesezeit">43 minuten.</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.2.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

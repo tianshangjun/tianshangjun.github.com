@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="推荐的JVM参数类型     参数运行模式     -sever整个堆内存大小     为-Xms和-Xmx设置相同的值。新生代空间大小     -XX:NewRatio: 2到4. -XX:NewSize=? –XX:MaxNewSize=?. 使用NewSize代替NewRatio也是可以的。持久代空间大小     -XX:PermSize=256m -XX:MaxPermSize=256m.">
+<meta name="keywords" content="云计算 大数据 AI 安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java vm">
+<meta property="og:url" content="http://tianjinchen.com/2016/11/15/javavm/index.html">
+<meta property="og:site_name" content="一君的博客">
+<meta property="og:description" content="推荐的JVM参数类型     参数运行模式     -sever整个堆内存大小     为-Xms和-Xmx设置相同的值。新生代空间大小     -XX:NewRatio: 2到4. -XX:NewSize=? –XX:MaxNewSize=?. 使用NewSize代替NewRatio也是可以的。持久代空间大小     -XX:PermSize=256m -XX:MaxPermSize=256m.">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-07-11T09:10:22.916Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="java vm">
+<meta name="twitter:description" content="推荐的JVM参数类型     参数运行模式     -sever整个堆内存大小     为-Xms和-Xmx设置相同的值。新生代空间大小     -XX:NewRatio: 2到4. -XX:NewSize=? –XX:MaxNewSize=?. 使用NewSize代替NewRatio也是可以的。持久代空间大小     -XX:PermSize=256m -XX:MaxPermSize=256m.">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://tianjinchen.com/2016/11/15/javavm/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>java vm | 一君的博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一君的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Navigationsleiste an/ausschalten">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Startseite</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Schlagwörter</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Kategorien</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-读书">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/books" rel="section"><i class="menu-item-icon fa fa-fw fa-book"></i> <br>读书</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-电影">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/movies" rel="section"><i class="menu-item-icon fa fa-fw fa-film"></i> <br>电影</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-calendar-check-o"></i> <br>Archiv</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianjinchen.com/2016/11/15/javavm/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Sam Tian">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一君的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">java vm
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Erstellt: 2016-11-15 17:20:00" itemprop="dateCreated datePublished" datetime="2016-11-15T17:20:00+08:00">2016-11-15</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Bearbeitet am</span>
+                
+                <time title="Geändert am: 2019-07-11 17:10:22" itemprop="dateModified" datetime="2019-07-11T17:10:22+08:00">2019-07-11</time>
+              </span>
+            
+          
+
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          <br>
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Symbole im Artikel gezählt: </span>
+              
+              <span title="Symbole im Artikel gezählt">2.2k</span>
+            </span>
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Lesezeit &asymp;</span>
+              
+              <span title="Lesezeit">2 minuten.</span>
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>推荐的JVM参数<br>类型     参数<br>运行模式     -sever<br>整个堆内存大小     为-Xms和-Xmx设置相同的值。<br>新生代空间大小     -XX:NewRatio: 2到4. -XX:NewSize=? –XX:MaxNewSize=?. 使用NewSize代替NewRatio也是可以的。<br>持久代空间大小     -XX:PermSize=256m -XX:MaxPermSize=256m. 设置一个在运行中不会出现问题的值即可，这个参数不影响性能。<br>GC日志     -Xloggc:$CATALINA_BASE/logs/gc.log -XX:+PrintGCDetails -XX:+PrintGCDateStamps. 记录GC日志并不会特别地影响Java程序性能，推荐你尽可能记录日志。<br>GC算法     -XX:+UseParNewGC -XX:+CMSParallelRemarkEnabled -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75. 一般来说推荐使用这些配置，但是根据程序不同的特性，其他的也有可能更好。<br>发生OOM时创建堆内存转储文件     -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=$CATALINA_BASE/logs<br>发生OOM后的操作     -XX:OnOutOfMemoryError=$CATALINA_HOME/bin/stop.sh 或 -XX:OnOutOfMemoryError=$CATALINA_HOME/bin/restart.sh. 记录内存转储文件后，为了管理的需要执行一个合适的操作。</p>
+<a id="more"></a>
+
+
+<pre><code>系统吞吐量（TPS、OPS）：从整体概念上理解程序的性能。
+每秒请求数（Request Per Second – RPS）：严格来说，RPS和单纯的响应能力是不同的，但是你可以把它理解为响应能力。通过这个指标，你能够了解到用户需要多长时间才能得到请求的结果。
+RPS的标准差：如果可能的话，还有必要包括事件的RPS。一旦出现了偏差，你应该检查GC或者网络系统。</code></pre><p>nGrinder工具<br>stop-the-world耗时过长</p>
+<p>stop-the-world耗时过长可能是由于GC参数不合理或者代码实现不正确。你可以通过分析工具或堆内存转储文件（Heap dump）来定位问题，比如检查堆内存中对象的类型和数量。如果在其中找到了很多不必要的对象，那么最好去改进代码。如果没有发现创建对象的过程中有特别的问题，那么最好单纯地修改GC参数。</p>
+<p>为了适当地调整GC参数，你需要获取一段足够长时间的GC日志，还必须知道哪些情况会导致长时间的stop-the-world</p>
+<p>CPU使用率过低</p>
+<p>当系统发生阻塞，吞吐量和CPU使用率都会降低。这可能是由于网络系统或者并发的问题。为了解决这个问题，你可以分析线程转储信息（Thread dump）或者使用分析工具</p>
+<p>CPU使用率过高</p>
+<p>如果吞吐量很低但是CPU使用率却很高，很可能是低效率代码导致的。这种情况下，你应该使用分析工具定位代码中性能的瓶颈。可使用的工具有：JVisualVM、Eclipse TPTP或者JProbe</p>
+<p>-client :设置JVM使用client模式,特点启动较快(神机不明显(I5/8G/SSD))<br>-server :设置JVM使用server模式。64位JDK默认启动该模式<br>-agentlib:libname[=options] :用于加载本地的lib<br>-agentlib:hprof :用于获取JVM的运行情况<br>-agentpath:pathnamep[=options] :加载制定路径的本地库<br>-Dproperty=value :设置系统属性名/值对<br>-jar :制定以jar包的形式执行一个应用程序<br>-javaagent:jarpath[=options] :实现premain方法在main方法前执行可以利用该方式玩一个JVM层面的hook很有意思的东西<br>-verbose:jni :输出native方法的调用情况玩JNI必备技能</p>
+<p>-verbose:gc :记录GC运行以及运行时间,一般用来查看GC是否有瓶颈<br>-XX:+PrintGCDetails :记录GC运行时的详细数据信息，包括新生占用的内存大小及消耗时间<br>-XX:-PrintGCTimeStamps :打印收集的时间戳<br>-XX:+UseParallelGC :使用并行垃圾收集器<br>-XX:-UseConcMarkSweepGC :使用并发标志扫描收集器<br>-XX:-UseSerialGC :使用串行垃圾收集器<br>-Xloggc:filename :设置GC记录的文件<br>-XX:+UseGCLogFileRotation :启用GC日志文件的自动转储<br>-XX:GCLogFileSize=1M :控制GC日志文件的大小</p>
+<p>-Xms :设置Java堆栈的初始化大小<br>-Xmx :设置最大的java堆大小<br>-Xmn :设置Young区大小<br>-Xss :设置java线程堆栈大小<br>-XX:PermSize and MaxPermSize :设置持久带的大小<br>-XX:NewRatio :设置年轻代和老年代的比值<br>-XX:NewSize :设置年轻代的大小<br>-XX:SurvivorRation=n :设置年轻代中E去与俩个S去的比值</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/06/28/vmwaredisk/" rel="next" title="vmware disk">
+                <i class="fa fa-chevron-left"></i> vmware disk
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/26/kernel/" rel="prev" title="升级内核">
+                升级内核 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Sam Tian</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">15</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/tianshangjun" title="GitHub &rarr; https://github.com/tianshangjun" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sam Tian</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="Insgesamt gezählte Symbole">48k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="Insgesamte Lesezeit">43 minuten.</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.2.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

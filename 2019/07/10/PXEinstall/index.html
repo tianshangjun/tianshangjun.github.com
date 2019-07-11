@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":true,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="yum install dhcp tftp tftp-server syslinux wget vsftpd      vi /etc/dhcp/dhcpd.conf   vi /etc/xinetd.d/tftp   mkdir -p /tftpboot     chmod 777 /tftpboot    ls /usr/share/syslinux/pxelinux.0    cp -v">
+<meta name="keywords" content="云计算 大数据 AI 安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PXE install">
+<meta property="og:url" content="http://tianjinchen.com/2019/07/10/PXEinstall/index.html">
+<meta property="og:site_name" content="一君的博客">
+<meta property="og:description" content="yum install dhcp tftp tftp-server syslinux wget vsftpd      vi /etc/dhcp/dhcpd.conf   vi /etc/xinetd.d/tftp   mkdir -p /tftpboot     chmod 777 /tftpboot    ls /usr/share/syslinux/pxelinux.0    cp -v">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-07-11T09:10:44.878Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PXE install">
+<meta name="twitter:description" content="yum install dhcp tftp tftp-server syslinux wget vsftpd      vi /etc/dhcp/dhcpd.conf   vi /etc/xinetd.d/tftp   mkdir -p /tftpboot     chmod 777 /tftpboot    ls /usr/share/syslinux/pxelinux.0    cp -v">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://tianjinchen.com/2019/07/10/PXEinstall/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>PXE install | 一君的博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">一君的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Navigationsleiste an/ausschalten">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Startseite</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>Schlagwörter</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Kategorien</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-读书">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/books" rel="section"><i class="menu-item-icon fa fa-fw fa-book"></i> <br>读书</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-电影">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/movies" rel="section"><i class="menu-item-icon fa fa-fw fa-film"></i> <br>电影</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-calendar-check-o"></i> <br>Archiv</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://tianjinchen.com/2019/07/10/PXEinstall/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Sam Tian">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一君的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">PXE install
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+
+              
+                
+              
+
+              <time title="Erstellt: 2019-07-10 17:20:00" itemprop="dateCreated datePublished" datetime="2019-07-10T17:20:00+08:00">2019-07-10</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Bearbeitet am</span>
+                
+                <time title="Geändert am: 2019-07-11 17:10:44" itemprop="dateModified" datetime="2019-07-11T17:10:44+08:00">2019-07-11</time>
+              </span>
+            
+          
+
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          <br>
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Symbole im Artikel gezählt: </span>
+              
+              <span title="Symbole im Artikel gezählt">3.5k</span>
+            </span>
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Lesezeit &asymp;</span>
+              
+              <span title="Lesezeit">3 minuten.</span>
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p> yum install dhcp tftp tftp-server syslinux wget vsftpd<br>
+  <br>
+  vi /etc/dhcp/dhcpd.conf<br>
+  vi /etc/xinetd.d/tftp<br>
+  mkdir -p /tftpboot<br>
+    chmod 777 /tftpboot<br>
+   ls /usr/share/syslinux/pxelinux.0<br>
+   cp -v /usr/share/syslinux/pxelinux.0 /tftpboot<br>
+     cp -v /usr/share/syslinux/menu.c32 /tftpboot<br>
+     cp -v /usr/share/syslinux/memdisk /tftpboot<br>
+    cp -v /usr/share/syslinux/mboot.c32 /tftpboot<br>
+    cp -v /usr/share/syslinux/chain.c32 /tftpboot<br>
+  cd /tftpboot/<br>
+<a id="more"></a>
+  mkdir /tftpboot/pxelinux.cfg<br><br>
+  mkdir -p /tftpboot/netboot/<br>
+   cp /var/ftp/pub/images/pxeboot/vmlinuz /tftpboot/netboot/<br>
+  cd /home/<br>
+   ls<br>
+   mount CentOS-7-x86_64-Minimal-1503-01.iso /var/ftp/pub<br>
+   ls /var/ftp/pub<br>
+   cp /var/ftp/pub/images/pxeboot/vmlinuz /tftpboot/netboot/<br>
+  cp /var/ftp/pub/images/pxeboot/initrd.img /tftpboot/netboot/<br>
+   openssl passwd -1 "000000"<br>
+   vi /var/ftp/pub/ks.cfg<br>
+   vi /tftpboot/pxelinux.cfg/default<br>
+    chkconfig dhcpd on<br>
+    chkconfig xinetd on<br>
+     chkconfig vsftpd on<br>
+   cd chkconfig dhcpd on<br>
+   chkconfig xinetd on<br>
+   </p>
+   <p>/var/ftp/ks.cfg<br>
+   #platform=x86, AMD64, or Intel EM64T
+ #version=DEVEL
+ # Firewall configuration
+ firewall --disabled
+ # Install OS instead of upgrade
+ install
+ # Use NFS installation media
+ url --url="ftp://192.168.72.8/pub/"
+ # Root password [i used here 000000]
+ rootpw --iscrypted $1$BDH9CrCs$0nkowzn4eJPtB8gtCbtqb1
+ # System authorization information
+ auth  useshadow  passalgo=sha512
+ # Use graphical install
+ graphical
+ firstboot disable
+ # System keyboard
+ keyboard us
+ # System language
+ lang en_US
+ # SELinux configuration
+ selinux disabled
+ # Installation logging level
+ logging level=info
+# System timezone
+ timezone Europe/Amsterdam
+ # System bootloader configuration
+ bootloader location=mbr
+ clearpart --all --initlabel
+ part swap --asprimary --fstype="swap" --size=1024
+ part /boot --fstype xfs --size=200
+ part pv.01 --size=1 --grow
+ volgroup rootvg01 pv.01
+ logvol / --fstype xfs --name=lv01 --vgname=rootvg01 --size=1 --grow
+
+</p><p>%packages<br>@base<br>@core<br>vim</p>
+<p>%end<br>   </p><br>   <p><br>    /etc/dhcp/dhcpd.conf <br><br>#</p>
+<h1 id="DHCP-Server-Configuration-file"><a href="#DHCP-Server-Configuration-file" class="headerlink" title="DHCP Server Configuration file."></a>DHCP Server Configuration file.</h1><h1 id="see-usr-share-doc-dhcp-dhcpd-conf-example"><a href="#see-usr-share-doc-dhcp-dhcpd-conf-example" class="headerlink" title="see /usr/share/doc/dhcp*/dhcpd.conf.example"></a>see /usr/share/doc/dhcp*/dhcpd.conf.example</h1><h1 id="see-dhcpd-conf-5-man-page"><a href="#see-dhcpd-conf-5-man-page" class="headerlink" title="see dhcpd.conf(5) man page"></a>see dhcpd.conf(5) man page</h1><p>#</p>
+<h1 id="option-definitions-common-to-all-supported-networks…"><a href="#option-definitions-common-to-all-supported-networks…" class="headerlink" title="option definitions common to all supported networks…"></a>option definitions common to all supported networks…</h1><p>ddns-update-style interim;<br> ignore client-updates;<br> authoritative;<br> allow booting;<br> allow bootp;<br> allow unknown-clients;</p>
+<h1 id="A-slightly-different-configuration-for-an-internal-subnet"><a href="#A-slightly-different-configuration-for-an-internal-subnet" class="headerlink" title="A slightly different configuration for an internal subnet."></a>A slightly different configuration for an internal subnet.</h1><p> subnet 192.168.72.0 netmask 255.255.255.0 {<br> range 192.168.72.200 192.168.72.253;<br> option domain-name-servers 192.168.72.8;<br> option domain-name “server1.example.com”;<br> option routers 192.168.72.8;<br> option broadcast-address 192.168.72.1; #not important<br> default-lease-time 600;<br> max-lease-time 7200;</p>
+<h1 id="PXE-SERVER-IP"><a href="#PXE-SERVER-IP" class="headerlink" title="PXE SERVER IP"></a>PXE SERVER IP</h1><p> next-server 192.168.72.8; #  DHCP server ip<br> filename “pxelinux.0”;<br> }<br>   </p><br>   <p><br>   /tftpboot/pxelinux.cfg/default<br><br>default menu.c32<br> prompt 0<br> timeout 30<br> MENU TITLE unixme.com PXE Menu</p>
+<p> LABEL centos7_x64<br> MENU LABEL CentOS 7 X64<br> KERNEL /netboot/vmlinuz<br> APPEND  initrd=/netboot/initrd.img  inst.repo=<a href="ftp://192.168.72.8/pub" target="_blank" rel="noopener">ftp://192.168.72.8/pub</a>  ks=<a href="ftp://192.168.72.8/ks.cfg" target="_blank" rel="noopener">ftp://192.168.72.8/ks.cfg</a><br>   </p><br>    <p><br>    /etc/selinux/config</p>
+<h1 id="This-file-controls-the-state-of-SELinux-on-the-system"><a href="#This-file-controls-the-state-of-SELinux-on-the-system" class="headerlink" title="This file controls the state of SELinux on the system."></a>This file controls the state of SELinux on the system.</h1><h1 id="SELINUX-can-take-one-of-these-three-values"><a href="#SELINUX-can-take-one-of-these-three-values" class="headerlink" title="SELINUX= can take one of these three values:"></a>SELINUX= can take one of these three values:</h1><h1 id="enforcing-SELinux-security-policy-is-enforced"><a href="#enforcing-SELinux-security-policy-is-enforced" class="headerlink" title="enforcing - SELinux security policy is enforced."></a>enforcing - SELinux security policy is enforced.</h1><h1 id="permissive-SELinux-prints-warnings-instead-of-enforcing"><a href="#permissive-SELinux-prints-warnings-instead-of-enforcing" class="headerlink" title="permissive - SELinux prints warnings instead of enforcing."></a>permissive - SELinux prints warnings instead of enforcing.</h1><h1 id="disabled-No-SELinux-policy-is-loaded"><a href="#disabled-No-SELinux-policy-is-loaded" class="headerlink" title="disabled - No SELinux policy is loaded."></a>disabled - No SELinux policy is loaded.</h1><p>SELINUX=disabled</p>
+<h1 id="SELINUXTYPE-can-take-one-of-three-two-values"><a href="#SELINUXTYPE-can-take-one-of-three-two-values" class="headerlink" title="SELINUXTYPE= can take one of three two values:"></a>SELINUXTYPE= can take one of three two values:</h1><h1 id="targeted-Targeted-processes-are-protected"><a href="#targeted-Targeted-processes-are-protected" class="headerlink" title="targeted - Targeted processes are protected,"></a>targeted - Targeted processes are protected,</h1><h1 id="minimum-Modification-of-targeted-policy-Only-selected-processes-are-protected"><a href="#minimum-Modification-of-targeted-policy-Only-selected-processes-are-protected" class="headerlink" title="minimum - Modification of targeted policy. Only selected processes are protected."></a>minimum - Modification of targeted policy. Only selected processes are protected.</h1><h1 id="mls-Multi-Level-Security-protection"><a href="#mls-Multi-Level-Security-protection" class="headerlink" title="mls - Multi Level Security protection."></a>mls - Multi Level Security protection.</h1><p>SELINUXTYPE=targeted </p>
+   <p></p>
+
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/09/centos6to7/" rel="next" title="centos upgrade">
+                <i class="fa fa-chevron-left"></i> centos upgrade
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/11/centosyum/" rel="prev" title="centos yum repo">
+                centos yum repo <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Sam Tian</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">15</span>
+                    <span class="site-state-item-name">Artikel</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/tianshangjun" title="GitHub &rarr; https://github.com/tianshangjun" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#DHCP-Server-Configuration-file"><span class="nav-number">1.</span> <span class="nav-text">DHCP Server Configuration file.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#see-usr-share-doc-dhcp-dhcpd-conf-example"><span class="nav-number">2.</span> <span class="nav-text">see /usr/share/doc/dhcp*/dhcpd.conf.example</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#see-dhcpd-conf-5-man-page"><span class="nav-number">3.</span> <span class="nav-text">see dhcpd.conf(5) man page</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#option-definitions-common-to-all-supported-networks…"><span class="nav-number">4.</span> <span class="nav-text">option definitions common to all supported networks…</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#A-slightly-different-configuration-for-an-internal-subnet"><span class="nav-number">5.</span> <span class="nav-text">A slightly different configuration for an internal subnet.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#PXE-SERVER-IP"><span class="nav-number">6.</span> <span class="nav-text">PXE SERVER IP</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#This-file-controls-the-state-of-SELinux-on-the-system"><span class="nav-number">7.</span> <span class="nav-text">This file controls the state of SELinux on the system.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SELINUX-can-take-one-of-these-three-values"><span class="nav-number">8.</span> <span class="nav-text">SELINUX= can take one of these three values:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#enforcing-SELinux-security-policy-is-enforced"><span class="nav-number">9.</span> <span class="nav-text">enforcing - SELinux security policy is enforced.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#permissive-SELinux-prints-warnings-instead-of-enforcing"><span class="nav-number">10.</span> <span class="nav-text">permissive - SELinux prints warnings instead of enforcing.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#disabled-No-SELinux-policy-is-loaded"><span class="nav-number">11.</span> <span class="nav-text">disabled - No SELinux policy is loaded.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SELINUXTYPE-can-take-one-of-three-two-values"><span class="nav-number">12.</span> <span class="nav-text">SELINUXTYPE= can take one of three two values:</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#targeted-Targeted-processes-are-protected"><span class="nav-number">13.</span> <span class="nav-text">targeted - Targeted processes are protected,</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#minimum-Modification-of-targeted-policy-Only-selected-processes-are-protected"><span class="nav-number">14.</span> <span class="nav-text">minimum - Modification of targeted policy. Only selected processes are protected.</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#mls-Multi-Level-Security-protection"><span class="nav-number">15.</span> <span class="nav-text">mls - Multi Level Security protection.</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sam Tian</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+    <span title="Insgesamt gezählte Symbole">48k</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+    <span title="Insgesamte Lesezeit">43 minuten.</span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.2.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
